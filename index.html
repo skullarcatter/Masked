@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masked</title>
+  <!-- Add Bootstrap CSS link -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    #resultContainer {
+      margin-top: 20px;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .resultFrame {
+      width: 100%;
+      height: 400px; /* Adjust the height as needed */
+      border: none;
+      margin-bottom: 10px;
+    }
+
+    #settingsContainer {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #d3d3d3;
+      border-radius: 8px;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background-color: #333;
+      color: #fff;
+    }
+
+    #settingsContainer.dark-mode {
+      background-color: #555;
+      color: #fff;
+    }
+
+    /* Custom color styles */
+    body.red-background {
+      background-color: #ff8080;
+    }
+
+    body.purple-background {
+      background-color: #b36bda;
+    }
+
+    #settingsContainer.red-background {
+      background-color: #ffcccc;
+    }
+
+    #settingsContainer.purple-background {
+      background-color: #d5b8ed;
+    }
+
+    /* Logo styles */
+    .logo {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      max-width: 50px;
+      max-height: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Add your logo here -->
+    <img class="logo" src="Untitled Project (1).jpg" alt="Site Logo">
+
+    <h1 class="mb-4">Masked</h1>
+    <h2>Make sure to use bing (some sites dont load yet)</h2>
+    <button type="button" class="btn btn-primary" onclick="proxyRequest()">Search</button>
+    <button type="button" class="btn btn-secondary mt-3" onclick="toggleSettings()">Settings</button>
+
+    <div id="settingsContainer">
+      <h2 class="mb-3">Settings</h2>
+      <label for="darkModeSwitch" class="form-check-label">Dark Mode:</label>
+      <input type="checkbox" id="darkModeSwitch" class="form-check-input" onchange="toggleDarkMode()">
+
+      <label for="redBackgroundSwitch" class="form-check-label mt-3">Red Background:</label>
+      <input type="checkbox" id="redBackgroundSwitch" class="form-check-input" onchange="toggleRedBackground()">
+
+      <label for="purpleBackgroundSwitch" class="form-check-label mt-3">Purple Background:</label>
+      <input type="checkbox" id="purpleBackgroundSwitch" class="form-check-input" onchange="togglePurpleBackground()">
+
+      <label for="searchEngine" class="form-label mt-3">Search Engine:</label>
+      <select id="searchEngine" class="form-select">
+        <option value="google">Google</option>
+        <option value="bing">Bing</option>
+        <!-- Add more search engines as needed -->
+      </select>
+    </div>
+
+    <form id="proxyForm">
+      <div class="mb-3">
+        <label for="url" class="form-label">Search:</label>
+        <input type="text" class="form-control" id="url" name="url" placeholder="Type your query and press Enter" required>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="proxyRequest()">Search</button>
+    </form>
+
+    <div id="resultContainer" class="mt-4"></div>
+    <button type="button" class="btn btn-danger mt-3" onclick="resetResults()">Reset Results</button>
+  </div>
+
+  <!-- Add Bootstrap JS and Popper.js -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function proxyRequest() {
+      const query = document.getElementById('url').value.toLowerCase();
+      const searchEngine = document.getElementById('searchEngine').value;
+
+      if (!query.trim()) {
+        return;
+      }
+
+      let searchURL;
+
+      // Check if the query is a specific website
+      if (query.includes('.com')) {
+        searchURL = `https://${query}`;
+      } else {
+        switch (searchEngine) {
+          case 'google':
+            searchURL = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            break;
+          case 'bing':
+            searchURL = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+            break;
+          // Add more cases for additional search engines
+          default:
+            searchURL = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            break;
+        }
+      }
+
+      // Create a new iframe for the search result
+      const resultContainer = document.getElementById('resultContainer');
+      const resultFrame = document.createElement('iframe');
+      resultFrame.className = 'resultFrame';
+      resultFrame.src = searchURL;
+
+      // Append the new iframe to the result container
+      resultContainer.appendChild(resultFrame);
+    }
+
+    function toggleSettings() {
+      const settingsContainer = document.getElementById('settingsContainer');
+      settingsContainer.style.display = settingsContainer.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleDarkMode() {
+      const body = document.body;
+      const settingsContainer = document.getElementById('settingsContainer');
+      body.classList.toggle('dark-mode');
+      settingsContainer.classList.toggle('dark-mode');
+    }
+
+    function toggleRedBackground() {
+      const body = document.body;
+      const settingsContainer = document.getElementById('settingsContainer');
+      body.classList.toggle('red-background');
+      settingsContainer.classList.toggle('red-background');
+      // Remove purple background class if present
+      body.classList.remove('purple-background');
+      settingsContainer.classList.remove('purple-background');
+    }
+
+    function togglePurpleBackground() {
+      const body = document.body;
+      const settingsContainer = document.getElementById('settingsContainer');
+      body.classList.toggle('purple-background');
+      settingsContainer.classList.toggle('purple-background');
+      // Remove red background class if present
+      body.classList.remove('red-background');
+      settingsContainer.classList.remove('red-background');
+    }
+
+    function resetResults() {
+      const resultContainer = document.getElementById('resultContainer');
+      resultContainer.innerHTML = ''; // Clear the content of the result container
+    }
+  </script>
+</body>
+</html>
